@@ -14,6 +14,11 @@ func main() {
 	//	fmt.Println("startup service failed, err:%v\n", err)
 	//}
 	r := gin.Default()
+
+	r.LoadHTMLGlob("template/**/*")
+	//如果你需要引入静态文件需要定义一个静态文件目录
+	//r.Static("/assets", "./assets")
+	routers.LoadHome(r)
 	routers.LoadBlog(r)
 	routers.LoadShop(r)
 	if err := r.Run(); err != nil {
