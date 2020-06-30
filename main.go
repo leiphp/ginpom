@@ -21,6 +21,8 @@ func main() {
 	routers.LoadHome(r)
 	routers.LoadBlog(r)
 	routers.LoadShop(r)
+	routers.LoadAsync(r)//异步
+	routers.LoadSync(r)//同步
 	if err := r.Run(); err != nil {
 		fmt.Println("startup service failed, err:%v\n", err)
 	}

@@ -19,8 +19,13 @@ func about(c *gin.Context) {
 	})
 }
 
+func website(c *gin.Context) {
+	c.Redirect(http.StatusMovedPermanently, "http://www.100txy.com")
+}
+
 func LoadHome(e *gin.Engine) {
+	e.GET("/", home)
 	e.GET("/index", index)
 	e.GET("/about", about)
-	e.GET("/", home)
+	e.GET("/website", website)
 }
