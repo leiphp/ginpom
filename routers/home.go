@@ -2,10 +2,21 @@ package routers
 
 import (
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
 )
+
+//自定义一个字符串
+var jwtkey = []byte("www.100txy.com")
+var str string
+
+type Claims struct {
+	UserId uint
+	jwt.StandardClaims
+}
+
 /*结构体验证*/
 type Person struct {
 	//不能为空并且大于10
@@ -76,6 +87,55 @@ func check(c *gin.Context) {
 	c.String(200, fmt.Sprintf("%#v", person))
 }
 
+//颁发token
+func setting(ctx *gin.Context) {
+	expireTime := time.Now().Add(7 * 24 * time.Hour)
+	claims := &Claims{
+		UserId: 2,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: expireTime.Unix(), //过期时间
+			IssuedAt:  time.Now().Unix(),
+			Issuer:    "127.0.0.1",  // 签名颁发者
+			Subject:   "user token", //签名主题
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	// fmt.Println(token)
+	tokenString, err := token.SignedString(jwtkey)
+	if err != nil {
+		fmt.Println(err)
+	}
+	str = tokenString
+	ctx.JSON(200, gin.H{"token": tokenString})
+}
+
+//解析token
+func getting(ctx *gin.Context) {
+	tokenString := ctx.GetHeader("Authorization")
+	//vcalidate token formate
+	if tokenString == "" {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"code": 401, "msg": "权限不足"})
+		ctx.Abort()
+		return
+	}
+
+	token, claims, err := ParseToken(tokenString)
+	if err != nil || !token.Valid {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"code": 401, "msg": "权限不足"})
+		ctx.Abort()
+		return
+	}
+	fmt.Println(111)
+	fmt.Println(claims.UserId)
+}
+
+func ParseToken(tokenString string) (*jwt.Token, *Claims, error) {
+	Claims := &Claims{}
+	token, err := jwt.ParseWithClaims(tokenString, Claims, func(token *jwt.Token) (i interface{}, err error) {
+		return jwtkey, nil
+	})
+	return token, Claims, err
+}
 
 func LoadHome(e *gin.Engine) {
 	e.GET("/", home)
@@ -85,4 +145,6 @@ func LoadHome(e *gin.Engine) {
 	e.GET("/login", login)
 	e.GET("/info", AuthMiddleWare(), info)
 	e.GET("/check", check)
+	e.GET("/set", setting)
+	e.GET("/get", getting)
 }
