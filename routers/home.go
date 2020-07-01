@@ -1,9 +1,18 @@
 package routers
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 )
+/*结构体验证*/
+type Person struct {
+	//不能为空并且大于10
+	Age      int       `form:"age" binding:"required,gt=10"`
+	Name     string    `form:"name" binding:"required"`
+	Birthday time.Time `form:"birthday" time_format:"2006-01-02" time_utc:"1"`
+}
 
 /*中间件*/
 func AuthMiddleWare() gin.HandlerFunc {
@@ -56,6 +65,17 @@ func info(c *gin.Context) {
 	c.JSON(200, gin.H{"data": "home"})
 }
 
+//结构体验证
+func check(c *gin.Context) {
+	// 验证url http://localhost:8080/check?age=11&name=ginpom&birthday=2006-01-02
+	var person Person
+	if err := c.ShouldBind(&person); err != nil {
+		c.String(500, fmt.Sprint(err))
+		return
+	}
+	c.String(200, fmt.Sprintf("%#v", person))
+}
+
 
 func LoadHome(e *gin.Engine) {
 	e.GET("/", home)
@@ -64,4 +84,5 @@ func LoadHome(e *gin.Engine) {
 	e.GET("/website", website)
 	e.GET("/login", login)
 	e.GET("/info", AuthMiddleWare(), info)
+	e.GET("/check", check)
 }
