@@ -14,7 +14,7 @@ func helloHandler(c *gin.Context) {
 	})
 }
 
-func login(c *gin.Context) {
+func login2(c *gin.Context) {
 	name := c.DefaultQuery("name", "jack")
 	c.String(200, fmt.Sprintf("hello %s\n", name))
 }
@@ -56,12 +56,12 @@ func SetupRouter() *gin.Engine {
 	v1 := r.Group("/v1")
 	// {} 是书写规范
 	{
-		v1.GET("/login", login)
+		v1.GET("/login", login2)
 		v1.GET("submit", submit)
 	}
 	v2 := r.Group("/v2")
 	{
-		v2.POST("/login", login)
+		v2.POST("/login", login2)
 		v2.POST("/submit", submit)
 	}
 
