@@ -2,8 +2,8 @@ package middleware
 
 import (
 	"encoding/json"
+	"ginpom/lib"
 	"github.com/gin-gonic/gin"
-	//"github.com/e421083458/golang_common/lib"
 )
 
 type ResponseCode int
@@ -28,29 +28,29 @@ type Response struct {
 	TraceId interface{} `json:"trace_id"`
 }
 
-//func ResponseError (c *gin.Context, code ResponseCode, err error) {
-//	trace,_ := c.Get("trace")
-//	traceContext,_ := trace.(*lib.TraceContext)
-//	traceId := ""
-//	if traceContext != nil {
-//		traceId = traceContext.TraceId
-//	}
-//	resp := &Response{ErrorCode:code,ErrorMsg:err.Error(),Data:"",TraceId:traceId}
-//	c.JSON(200,resp)
-//	response,_ := json.Marshal(resp)
-//	c.Set("response", string(response))
-//	c.AbortWithError(200, err)
-//}
+func ResponseError (c *gin.Context, code ResponseCode, err error) {
+	trace,_ := c.Get("trace")
+	traceContext,_ := trace.(*lib.TraceContext)
+	traceId := ""
+	if traceContext != nil {
+		traceId = traceContext.TraceId
+	}
+	resp := &Response{ErrorCode:code,ErrorMsg:err.Error(),Data:"",TraceId:traceId}
+	c.JSON(200,resp)
+	response,_ := json.Marshal(resp)
+	c.Set("response", string(response))
+	c.AbortWithError(200, err)
+}
 
-//func ResponseSuccess (c *gin.Context, data interface{}) {
-//	trace,_ := c.Get("trace")
-//	traceContext,_ := trace.(*lib.TraceContext)
-//	traceId := ""
-//	if traceContext != nil {
-//		traceId = traceContext.TraceId
-//	}
-//	resp := &Response{ErrorCode:SuccessCode,ErrorMsg:"",Data:data,TraceId:traceId}
-//	c.JSON(200,resp)
-//	response,_ := json.Marshal(resp)
-//	c.Set("response", string(response))
-//}
+func ResponseSuccess (c *gin.Context, data interface{}) {
+	trace,_ := c.Get("trace")
+	traceContext,_ := trace.(*lib.TraceContext)
+	traceId := ""
+	if traceContext != nil {
+		traceId = traceContext.TraceId
+	}
+	resp := &Response{ErrorCode:SuccessCode,ErrorMsg:"",Data:data,TraceId:traceId}
+	c.JSON(200,resp)
+	response,_ := json.Marshal(resp)
+	c.Set("response", string(response))
+}
