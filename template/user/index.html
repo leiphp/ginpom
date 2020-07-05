@@ -1,5 +1,8 @@
 {{ define "user/index.html" }}
     {{template "public/header" .}}
-    Hello ginpom! {{.address}}
+        <h1>Hello ginpom! </h1>
+        <div style="color: red;">
+            welcome to {{.address}}
+        </div>
     {{template "public/footer" .}}
 {{ end }}
